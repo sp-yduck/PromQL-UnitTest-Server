@@ -3,18 +3,18 @@ package main
 import (
 	"net/http"
 	"os/exec"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
 
-func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+func root(c echo.Context) error {
+	res, _ := exec.Command("promtool").Output()
+	return c.String(http.StatusOK, string(res))
 }
 
 func promtool(c echo.Context) error {
-	res, err := exec.Command("promtool").Output()
-	if err != nil {
-		return err
-	}
+	args := strings.Split(c.Param("*"), "/")
+	res, _ := exec.Command("promtool", args...).Output()
 	return c.String(http.StatusOK, string(res))
 }
